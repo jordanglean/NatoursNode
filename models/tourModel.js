@@ -19,3 +19,5 @@ const tourSchema = new mongoose.Schema({
 
 // Model
 const Tour = mongoose.model('Tour', tourSchema);
+
+module.exports = Tour;
