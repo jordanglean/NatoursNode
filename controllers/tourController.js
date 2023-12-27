@@ -30,26 +30,22 @@ exports.getTourById = (req, res) => {
   // });
 };
 
-exports.checkBody = (req, res, next) => {
-  // check if body contains name and price property
-  if (req.body.name && req.body.price) {
-    console.log(`Request:\nName: ${req.body.name}\nPrice: ${req.body.price}`);
-    next();
-  } else {
-    return res.status(400).json({
-      status: 'error',
-      message: `Bad Request:\nName Missing?: ${req.body.name}\nPrice Missing?: ${req.body.price} `,
+exports.createTour = async (req, res) => {
+  try {
+    const newTour = await Tour.create(req.body);
+
+    res.status(201).json({
+      status: 'success',
+      data: {
+        tour: newTour,
+      },
+    });
+  } catch (error) {
+    res.status(400).json({
+      status: 'fail',
+      message: 'Invalid data sent', // dont do this in prod
     });
   }
-};
-
-exports.createTour = (req, res) => {
-  res.status(201).json({
-    status: 'success',
-    data: {
-      data: null,
-    },
-  });
 };
 
 exports.updateTour = (req, res) => {
