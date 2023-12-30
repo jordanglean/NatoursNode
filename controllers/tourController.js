@@ -4,8 +4,29 @@ const Tour = require('../models/tourModel');
 // GET All Tours Route
 exports.getAllTours = async (req, res) => {
   try {
-    const tours = await Tour.find();
+    // 1) Filtering
+    // eslint-disable-next-line node/no-unsupported-features/es-syntax
+    const queryObj = { ...req.query };
+    const excludeFields = ['page', 'sort', 'limit', 'fields'];
+    excludeFields.forEach((el) => delete queryObj[el]);
 
+    // 2) Advance Filtering -> MongoDB
+    let queryString = JSON.stringify(queryObj);
+    queryString = queryString.replace(
+      /\b(gte|gt|lte|lt)\b/g,
+      (match) => `$${match}`,
+    );
+    console.log(JSON.parse(queryString));
+
+    const query = Tour.find(JSON.parse(queryString));
+    // EXECUTE QUERY
+    const tours = await query;
+
+    // const tours = await Tour.find()
+    //   .where('duration')
+    //   .equals(5)
+    //   .where('difficulty')
+    //   .equals('easy');
     res.status(200).json({
       status: 'success',
       results: tours.length,
